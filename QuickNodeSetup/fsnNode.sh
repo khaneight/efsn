@@ -395,23 +395,22 @@ initConfig() {
     echo "${txtgrn}✓${txtrst} Selected node type $nodetype"
     putCfgValue 'nodeType' "$nodetype"
 
-    echo
-    question="${txtylw}Do you want to install a mainnet node?${txtrst} [Y/n] "
-    local testnet="false"
-    askToContinue "$question"
-    if [ $? -eq 0 ]; then
-        echo "${txtgrn}✓${txtrst} Installing mainnet node"
-    else
-        echo
-        question="${txtylw}Are you sure you want to install a testnet node?${txtrst} [Y/n] "
-        askToContinue "$question"
-        if [ $? -eq 0 ]; then
-            testnet="true"
-            echo "${txtgrn}✓${txtrst} Installing testnet node"
-        else
-            echo "${txtgrn}✓${txtrst} Installing mainnet node"
-        fi
-    fi
+    echo question="${txtylw}Installing testnet node${txtrst}"
+    local testnet="true"
+    # askToContinue "$question"
+    # if [ $? -eq 0 ]; then
+    #     echo "${txtgrn}✓${txtrst} Installing mainnet node"
+    # else
+    #     echo
+    #     question="${txtylw}Are you sure you want to install a testnet node?${txtrst} [Y/n] "
+    #     askToContinue "$question"
+    #     if [ $? -eq 0 ]; then
+    #         testnet="true"
+    #         echo "${txtgrn}✓${txtrst} Installing testnet node"
+    #     else
+    #         echo "${txtgrn}✓${txtrst} Installing mainnet node"
+    #     fi
+    # fi
     putCfgValue 'testnet' "$testnet"
 
     if [ "$nodetype" = "minerandlocalgateway" -o "$nodetype" = "efsn" ]; then
@@ -528,7 +527,7 @@ createContainer() {
         sudo docker create --name fusion -t --restart unless-stopped \
             -p 127.0.0.1:9000:9000 -p 127.0.0.1:9001:9001 -p 40408:40408 -p 40408:40408/udp \
             -v "$BASE_DIR/fusion-node":/fusion-node \
-            fusionnetwork/minerandlocalgateway \
+            fusionnetwork/testnet-minerandlocalgateway \
             -u "$address" $testnet $autobuy $mining \
             -e "$nodename"
 
@@ -536,7 +535,7 @@ createContainer() {
         sudo docker create --name fusion -t --restart unless-stopped \
             -p 40408:40408 -p 40408:40408/udp \
             -v "$BASE_DIR/fusion-node":/fusion-node \
-            fusionnetwork/efsn \
+            fusionnetwork/testnet-efsn \
             -u "$address" $testnet $autobuy $mining \
             -e "$nodename"
 
@@ -546,7 +545,7 @@ createContainer() {
         sudo docker create --name fusion -t --restart unless-stopped \
             -p 127.0.0.1:9000:9000 -p 127.0.0.1:9001:9001 -p 40408:40408 -p 40408:40408/udp \
             -v "$BASE_DIR/fusion-node":/fusion-node \
-            fusionnetwork/gateway \
+            fusionnetwork/testnet-gateway \
             $testnet \
             -e "$nodename"
 
